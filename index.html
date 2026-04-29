@@ -12,7 +12,6 @@
       --bg: #fef5f0;
       --ink: #1a1614;
       --ink-soft: #5a4f4a;
-      --accent: #1a1614;
       --radius: 3px;
     }
 
@@ -27,7 +26,6 @@
       padding: 2rem 1.25rem;
     }
 
-    /* subtle grain overlay */
     body::before {
       content: '';
       position: fixed;
@@ -44,21 +42,11 @@
       width: 100%;
     }
 
-    /* ── INTRO SCREEN ── */
     #intro {
       display: flex;
       flex-direction: column;
       gap: 2rem;
       animation: fadeUp .55s ease both;
-    }
-
-    .label {
-      font-family: 'DM Sans', sans-serif;
-      font-size: .7rem;
-      font-weight: 500;
-      letter-spacing: .18em;
-      text-transform: uppercase;
-      color: var(--ink-soft);
     }
 
     h1 {
@@ -78,13 +66,8 @@
     }
 
     .intro-body p + p { margin-top: .9rem; }
+    .intro-body strong { color: var(--ink); font-weight: 500; }
 
-    .intro-body strong {
-      color: var(--ink);
-      font-weight: 500;
-    }
-
-    /* ── BUTTONS ── */
     .btn-primary {
       display: inline-block;
       background: var(--ink);
@@ -101,11 +84,7 @@
       text-decoration: none;
       align-self: flex-start;
     }
-    .btn-primary:hover {
-      background: transparent;
-      color: var(--ink);
-      transform: translateY(-2px);
-    }
+    .btn-primary:hover { background: transparent; color: var(--ink); transform: translateY(-2px); }
     .btn-primary:active { transform: translateY(0); }
 
     .btn-secondary {
@@ -125,16 +104,15 @@
     }
     .btn-secondary:hover { color: var(--ink); }
 
-    /* ── IMAGE SCREEN ── */
+    /* IMAGE SCREEN */
     #image-screen {
       display: none;
       flex-direction: column;
-      gap: 2rem;
+      gap: 1rem;
       animation: fadeUp .45s ease both;
     }
 
     .img-wrapper {
-      position: relative;
       width: 100%;
       border-radius: var(--radius);
       overflow: hidden;
@@ -142,19 +120,23 @@
       line-height: 0;
     }
 
+    /* Key fix: image never exceeds viewport height minus room for label + timer + padding */
     .img-wrapper img {
       width: 100%;
+      height: auto;
+      max-height: calc(100vh - 130px);
+      object-fit: contain;
       display: block;
       border-radius: var(--radius);
     }
 
-    /* countdown ring */
     .timer-bar {
       width: 100%;
-      height: 3px;
+      height: 4px;
       background: #ddd0cb;
       border-radius: 99px;
       overflow: hidden;
+      flex-shrink: 0;
     }
     .timer-fill {
       height: 100%;
@@ -180,25 +162,32 @@
       max-width: 420px;
     }
 
-    /* ── ANIMATIONS ── */
-    @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(18px); }
-      to   { opacity: 1; transform: translateY(0); }
+    .label {
+      font-family: 'DM Sans', sans-serif;
+      font-size: .7rem;
+      font-weight: 500;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+      color: var(--ink-soft);
     }
 
-    /* thin decorative line top */
     .deco-line {
       width: 40px;
       height: 2px;
       background: var(--ink);
       margin-bottom: .5rem;
     }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(18px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
   </style>
 </head>
 <body>
 <div class="card">
 
-  <!-- ── INTRO ── -->
+  <!-- INTRO -->
   <div id="intro">
     <h1>Danke, dass du dir kurz Zeit nimmst! 🙌</h1>
 
@@ -210,7 +199,7 @@
     <button class="btn-primary" onclick="startSurvey()">Starten</button>
   </div>
 
-  <!-- ── IMAGE SCREEN ── -->
+  <!-- IMAGE SCREEN -->
   <div id="image-screen">
     <div>
       <div class="deco-line"></div>
@@ -223,7 +212,6 @@
 
     <div class="timer-bar"><div class="timer-fill" id="timerFill"></div></div>
 
-    <!-- shown after 5 s -->
     <div class="after-actions" id="afterActions">
       <a href="https://docs.google.com/forms/d/e/1FAIpQLScSRyJok6xh8kCZGniD7WH3E-xEC2kFHL27vlLL6fTrBFMm2g/viewform?usp=dialog" target="_blank" class="btn-primary" style="align-self:flex-start;">Weiter →</a>
 
@@ -239,27 +227,26 @@
 </div>
 
 <script>
-  const DURATION = 5000; // ms
+  const DURATION = 5000;
 
   function startSurvey() {
     document.getElementById('intro').style.display = 'none';
-    const screen = document.getElementById('image-screen');
-    screen.style.display = 'flex';
+    document.getElementById('image-screen').style.display = 'flex';
+    window.scrollTo({ top: 0, behavior: 'instant' });
     showImageFor(DURATION);
   }
 
   function showImageFor(duration) {
-    const img = document.getElementById('imgWrapper');
+    const wrapper = document.getElementById('imgWrapper');
     const afterActions = document.getElementById('afterActions');
     const fill = document.getElementById('timerFill');
 
-    // reset
-    img.classList.remove('img-hidden');
+    wrapper.classList.remove('img-hidden');
     afterActions.style.display = 'none';
     fill.style.transition = 'none';
     fill.style.transform = 'scaleX(1)';
+    window.scrollTo({ top: 0, behavior: 'instant' });
 
-    // start shrink animation
     requestAnimationFrame(() => {
       requestAnimationFrame(() => {
         fill.style.transition = `transform ${duration}ms linear`;
@@ -268,7 +255,7 @@
     });
 
     setTimeout(() => {
-      img.classList.add('img-hidden');
+      wrapper.classList.add('img-hidden');
       afterActions.style.display = 'flex';
     }, duration);
   }
