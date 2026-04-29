@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Umfrage – Verpackungen</title>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,400;0,600;1,300&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #fef5f0;
+      --ink: #1a1614;
+      --ink-soft: #5a4f4a;
+      --accent: #1a1614;
+      --radius: 3px;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--ink);
+      font-family: 'DM Sans', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem 1.25rem;
+    }
+
+    /* subtle grain overlay */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .card {
+      position: relative;
+      z-index: 1;
+      max-width: 620px;
+      width: 100%;
+    }
+
+    /* ── INTRO SCREEN ── */
+    #intro {
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+      animation: fadeUp .55s ease both;
+    }
+
+    .label {
+      font-family: 'DM Sans', sans-serif;
+      font-size: .7rem;
+      font-weight: 500;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+      color: var(--ink-soft);
+    }
+
+    h1 {
+      font-family: 'Fraunces', serif;
+      font-size: clamp(2rem, 5vw, 2.8rem);
+      font-weight: 300;
+      line-height: 1.2;
+      color: var(--ink);
+    }
+
+    .intro-body {
+      font-size: .98rem;
+      line-height: 1.75;
+      color: var(--ink-soft);
+      border-left: 2px solid var(--ink);
+      padding-left: 1.25rem;
+    }
+
+    .intro-body p + p { margin-top: .9rem; }
+
+    .intro-body strong {
+      color: var(--ink);
+      font-weight: 500;
+    }
+
+    /* ── BUTTONS ── */
+    .btn-primary {
+      display: inline-block;
+      background: var(--ink);
+      color: #fff;
+      font-family: 'DM Sans', sans-serif;
+      font-size: .92rem;
+      font-weight: 500;
+      letter-spacing: .06em;
+      padding: .9rem 2.4rem;
+      border: 2px solid var(--ink);
+      border-radius: var(--radius);
+      cursor: pointer;
+      transition: background .18s, color .18s, transform .12s;
+      text-decoration: none;
+      align-self: flex-start;
+    }
+    .btn-primary:hover {
+      background: transparent;
+      color: var(--ink);
+      transform: translateY(-2px);
+    }
+    .btn-primary:active { transform: translateY(0); }
+
+    .btn-secondary {
+      display: inline-block;
+      background: transparent;
+      color: var(--ink-soft);
+      font-family: 'DM Sans', sans-serif;
+      font-size: .82rem;
+      font-weight: 400;
+      padding: .55rem .2rem;
+      border: none;
+      border-bottom: 1px solid currentColor;
+      border-radius: 0;
+      cursor: pointer;
+      transition: color .18s;
+      text-decoration: none;
+    }
+    .btn-secondary:hover { color: var(--ink); }
+
+    /* ── IMAGE SCREEN ── */
+    #image-screen {
+      display: none;
+      flex-direction: column;
+      gap: 2rem;
+      animation: fadeUp .45s ease both;
+    }
+
+    .img-wrapper {
+      position: relative;
+      width: 100%;
+      border-radius: var(--radius);
+      overflow: hidden;
+      background: #e8ddd7;
+      line-height: 0;
+    }
+
+    .img-wrapper img {
+      width: 100%;
+      display: block;
+      border-radius: var(--radius);
+    }
+
+    /* countdown ring */
+    .timer-bar {
+      width: 100%;
+      height: 3px;
+      background: #ddd0cb;
+      border-radius: 99px;
+      overflow: hidden;
+    }
+    .timer-fill {
+      height: 100%;
+      width: 100%;
+      background: var(--ink);
+      border-radius: 99px;
+      transform-origin: left;
+      transition: transform linear;
+    }
+
+    .img-hidden { display: none !important; }
+
+    .after-actions {
+      display: none;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+
+    .revisit-note {
+      font-size: .78rem;
+      color: var(--ink-soft);
+      line-height: 1.55;
+      max-width: 420px;
+    }
+
+    /* ── ANIMATIONS ── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(18px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* thin decorative line top */
+    .deco-line {
+      width: 40px;
+      height: 2px;
+      background: var(--ink);
+      margin-bottom: .5rem;
+    }
+  </style>
+</head>
+<body>
+<div class="card">
+
+  <!-- ── INTRO ── -->
+  <div id="intro">
+    <h1>Danke, dass du dir kurz Zeit nimmst! 🙌</h1>
+
+    <div class="intro-body">
+      <p><strong>👉 Wichtig:</strong> Wenn du auf den Button „Starten" klickst, siehst du gleich ein Bild mit mehreren Produkten in einem Regal. Das Bild wird nur <strong>5 Sekunden</strong> angezeigt – bitte schau es dir einfach an, ohne lange nachzudenken.</p>
+      <p>Danach kannst du erneut auf „weiter" klicken und kommst zu ein paar kurzen Fragen.</p>
+    </div>
+
+    <button class="btn-primary" onclick="startSurvey()">Starten</button>
+  </div>
+
+  <!-- ── IMAGE SCREEN ── -->
+  <div id="image-screen">
+    <div>
+      <div class="deco-line"></div>
+      <span class="label">Bitte anschauen · 5 Sekunden</span>
+    </div>
+
+    <div class="img-wrapper" id="imgWrapper">
+      <img id="surveyImg" src="https://cdn.shopware.store/8/c/a/BUx9t/media/eb/64/3d/1777451490/Biomarkt-Regal_3.png" alt="Regal mit Produkten" />
+    </div>
+
+    <div class="timer-bar"><div class="timer-fill" id="timerFill"></div></div>
+
+    <!-- shown after 5 s -->
+    <div class="after-actions" id="afterActions">
+      <a href="https://docs.google.com/forms/d/e/1FAIpQLScSRyJok6xh8kCZGniD7WH3E-xEC2kFHL27vlLL6fTrBFMm2g/viewform?usp=dialog" target="_blank" class="btn-primary" style="align-self:flex-start;">Weiter →</a>
+
+      <div>
+        <button class="btn-secondary" onclick="replayImage()">Bild nochmal ansehen</button>
+        <p class="revisit-note" style="margin-top:.5rem;">
+          <strong>Wichtig:</strong> Bitte nur klicken, wenn du die Bild-Inhalte nicht gut erkennen konntest oder es technische Probleme gab.
+        </p>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  const DURATION = 5000; // ms
+
+  function startSurvey() {
+    document.getElementById('intro').style.display = 'none';
+    const screen = document.getElementById('image-screen');
+    screen.style.display = 'flex';
+    showImageFor(DURATION);
+  }
+
+  function showImageFor(duration) {
+    const img = document.getElementById('imgWrapper');
+    const afterActions = document.getElementById('afterActions');
+    const fill = document.getElementById('timerFill');
+
+    // reset
+    img.classList.remove('img-hidden');
+    afterActions.style.display = 'none';
+    fill.style.transition = 'none';
+    fill.style.transform = 'scaleX(1)';
+
+    // start shrink animation
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        fill.style.transition = `transform ${duration}ms linear`;
+        fill.style.transform = 'scaleX(0)';
+      });
+    });
+
+    setTimeout(() => {
+      img.classList.add('img-hidden');
+      afterActions.style.display = 'flex';
+    }, duration);
+  }
+
+  function replayImage() {
+    showImageFor(DURATION);
+  }
+</script>
+</body>
+</html>
